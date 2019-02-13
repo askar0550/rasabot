@@ -20,3 +20,6 @@ python -m rasa_nlu.train -c nlu_config.yaml --data .\data\nlu_data.md -o models 
 
 # train the dialog model
 python -m rasa_core.train -d domain.yaml -s .\data\stories.md -o models/dialogue
+
+# start action server
+python -m rasa_core_sdk.endpoint --actions actions
