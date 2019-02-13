@@ -13,13 +13,19 @@ from botbuilder.core import (BotFrameworkAdapter, BotFrameworkAdapterSettings, T
 
 from rasa_core.agent import Agent
 from rasa_core.interpreter import RasaNLUInterpreter
+from rasa_core.utils import EndpointConfig
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # RASA loader
 interpreter = RasaNLUInterpreter('models/current/nlu')
 print('the interpreter has been loaded')
 
-agent = Agent.load('models/dialogue', interpreter=interpreter)
-print('the agent is ready')
+agent = Agent.load('models/dialogue', interpreter=interpreter, action_endpoint=EndpointConfig(url="http://127.0.0.1:5055/webhook"))
+print('agent has been loaded')
+
+
 
 
 APP_ID = ''
@@ -58,10 +64,10 @@ async def handle_message(context: TurnContext) -> web.Response:
     # Access the state for the conversation between the user and the bot.
     state = await CONVERSATION_STATE.get(context)
 
-    if hasattr(state, 'counter'):
-        state.counter += 1
-    else:
-        state.counter = 1
+    # if hasattr(state, 'counter'):
+    #     state.counter += 1
+    # else:
+    #     state.counter = 1
     # mssg = f'{state.counter}: You said {context.activity.text}.'
     mssg = agent.handle_message(context.activity.text)
     try:
